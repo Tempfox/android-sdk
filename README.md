@@ -20,6 +20,79 @@ AndroidManifest.xmlの`<application>`内に以下の`<meta-data>`を追加しま
 
     <meta-data android:name="com.getirkit.IRKIT_API_KEY" android:value="YOUR_API_KEY" />
 
+### クラスの概要
+
+主に以下のクラスを使ってデータを管理します。
+
+クラス名           | 役割
+------------------ | -------------------------------
+IRKit              | SDKの基本クラス
+IRSignal           | 赤外線信号を表す
+IRSignals          | IRSignalを格納するArrayList
+IRPeripheral       | IRKitデバイスを表す
+IRPeripherals      | IRPeripheralを格納するArrayList
+
+IRKitクラスはsingletonになっており、`IRKit.sharedInstance()`でインスタンスを取得します。IRSignalsとIRPeripheralsの各インスタンスはIRKitインスタンスから以下のようにして取得できます。
+
+    IRKit irkit = IRKit.sharedInstance();
+
+    // 保存されている赤外線信号一覧を取得
+    IRSignals signals = irkit.signals;
+
+    // 保存済のIRKitデバイス一覧を取得
+    IRPeripherals peripherals = irkit.peripherals;
+
+
+### IRKitデバイス発見イベントを受け取る
+
+SDKはローカルネットワーク内のIRKitをマルチキャストDNSで自動検出します。IRKitデバイスが見つかった際にイベントを受け取るには、以下2つのメソッドをオーバーライドしてIRKitEventListenerを実装します。
+
+    @Override
+    public void onNewIRKitFound(IRPeripheral peripheral) {
+        // 新しいIRKitデバイスを発見した
+    }
+
+    @Override
+    public void onExistingIRKitFound(IRPeripheral peripheral) {
+        // 既存のIRKitデバイスを発見した
+    }
+
+実装したIRKitEventListenerを以下のように登録することで、イベントの通知が開始されます。
+
+    IRKit.sharedInstance().setIRKitEventListener(this);
+
+SDKが[新しいIRKitデバイスを発見][]した場合、SDKが内部的な設定と`IRKit.sharedInstance().peripherals`への追加を自動的に行います。
+
+[新しいIRKitデバイスを発見]: `IRKit.sharedInstance().peripherals`に登録されていないIRPeripheralを検出した場合に「新しいIRKit」として認識される。
+
+### 信号を手動で登録する
+
+    IRSignals signals = IRKit.sharedInstance().signals;
+
+    IRSignal signal = new IRSignal();
+    // format, freq, dataの仕様は http://getirkit.com/#toc_5 を参照
+    signal.setFormat("raw");
+    signal.setFrequency(38.0f);
+    signal.setData(new int[]{
+        18031, 8755, 1190, 1190, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 1190, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 3341, 1190, 3341, 1190, 1190, 1190, 3341, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 3341, 1190, 65535, 0, 9379, 18031, 4400, 1190
+    });
+
+    signal.setId(signals.getNewId()); // 新しいidを割り振る
+    signal.setName("暖房"); // 信号の名前
+
+    // Drawableリソースをアイコンとして使う場合
+    signal.setImageResourceId(R.drawable.btn_icon_256_aircon, getResources());
+
+    // 画像ファイルをアイコンとして使う場合
+    signal.setImageFilename("image.png"); // 内部ストレージの画像ファイルのパス
+
+    signal.setDeviceId("testdeviceid"); // 対応するIRKitデバイスのdeviceid
+
+    // IRSignalsに追加して保存
+    signals.add(signal);
+    signals.save();
+
+
 ### Activity
 
 SDKには4つのActivityが用意されています。
