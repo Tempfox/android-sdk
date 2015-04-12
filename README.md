@@ -45,7 +45,7 @@ IRKitクラスはsingletonになっており、`IRKit.sharedInstance()`でイン
 
 ### IRKitデバイス発見イベントを受け取る
 
-SDKはローカルネットワーク内のIRKitをマルチキャストDNSで自動検出します。IRKitデバイスが見つかった際にイベントを受け取るには、以下2つのメソッドをオーバーライドしてIRKitEventListenerを実装します。
+SDKはローカルネットワーク内のIRKitをmDNSで自動検出します。IRKitデバイスが見つかった際にイベントを受け取るには、以下2つのメソッドをオーバーライドしてIRKitEventListenerを実装します。
 
     @Override
     public void onNewIRKitFound(IRPeripheral peripheral) {
@@ -82,7 +82,7 @@ SDKが新しいIRKitデバイスを発見した場合、SDKが内部的な設定
     signal.setImageResourceId(R.drawable.btn_icon_256_aircon, getResources());
 
     // 画像ファイルをアイコンとして使う場合
-    signal.setImageFilename("image.png"); // 内部ストレージの画像ファイルのパス
+    signal.setImageFilename("image.png"); // 内部ストレージ上の画像ファイルのパス
 
     signal.setDeviceId("testdeviceid"); // 対応するIRKitデバイスのdeviceid
 
