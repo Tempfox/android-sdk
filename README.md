@@ -61,9 +61,7 @@ SDKはローカルネットワーク内のIRKitをマルチキャストDNSで自
 
     IRKit.sharedInstance().setIRKitEventListener(this);
 
-SDKが新しいIRKitデバイスを発見 [1] した場合、SDKが内部的な設定と`IRKit.sharedInstance().peripherals`への追加を自動的に行います。
-
-[1]: `IRKit.sharedInstance().peripherals`に登録されていないIRPeripheralを検出した場合に「新しいIRKit」として認識される。
+SDKが新しいIRKitデバイスを発見した場合、SDKが内部的な設定と`IRKit.sharedInstance().peripherals`への追加を自動的に行います。`IRKit.sharedInstance().peripherals`に含まれていないIRKitを発見した場合に「新しいIRKit」として認識されます。
 
 ### 信号を手動で登録する
 
